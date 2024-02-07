@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  # generate jwt.txt if it's absent
+  generate-jwt:
+    image: blastio/openssl
+    volumes:
+      - $PWD:/blast:rw
+    command: >
+      sh -c "[ ! -f /blast/jwt.txt ] && openssl rand -hex 32 | tr -d '\n' > /blast/jwt.txt"
+  # initialise geth db
+  geth-init:
+    image: blastio/blast-geth:testnet-sepolia
+    volumes:
+      - $PWD:/blast:rw
+    command: >
+      init --datadir=/blast/${GETH_DATA_DIR} /blast/config/genesis.json
+    depends_on:
+      - generate-jwt
+  blast-geth:
+    image: blastio/blast-geth:testnet-sepolia
+    volumes:
+      - $PWD:/blast
+    ports:
+      - "9545:9545"
+      - "9546:9546"
+    command: >
+      --datadir=/blast/${GETH_DATA_DIR}
+      --http
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --http.addr=0.0.0.0
+      --http.port=9545
+      --http.api=web3,debug,eth,txpool,net,engine
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=9546
+      --ws.origins="*"
+      --ws.api=debug,eth,txpool,net,engine
+      --authrpc.addr="0.0.0.0"
+      --authrpc.port="8551"
+      --authrpc.vhosts="*"
+      --authrpc.jwtsecret=/blast/jwt.txt
+      --syncmode=full
+      --gcmode=archive
+      --nodiscover
+      --maxpeers=0
+      --rollup.disabletxpoolgossip=true
+      --rollup.sequencerhttp=https://sequencer.s2.testblast.io
+    networks:
+      - blast-net
+    env_file: 
+      - .env
+    depends_on:
+      geth-init:
+        condition: service_completed_successfully
+  op-node:
+    image: blastio/blast-optimism:testnet-sepolia
+    volumes:
+      - $PWD:/blast
+    ports:
+      - "9003:9003"
+    command: >
+      op-node
+      --l1="$L1_RPC_URL"
+      --l1.rpckind="$L1_RPC_KIND"
+      --l2="http://blast-geth:8551"
+      --l2.jwt-secret=/blast/jwt.txt
+      --rollup.config="/blast/config/rollup.json"
+      --p2p.bootnodes=enr:-J-4QM3GLUFfKMSJQuP1UvuKQe8DyovE7Eaiit0l6By4zjTodkR4V8NWXJxNmlg8t8rP-Q-wp3jVmeAOml8cjMj__ROGAYznzb_HgmlkgnY0gmlwhA-cZ_eHb3BzdGFja4X947FQAIlzZWNwMjU2azGhAiuDqvB-AsVSRmnnWr6OHfjgY8YfNclFy9p02flKzXnOg3RjcIJ2YYN1ZHCCdmE,enr:-J-4QDCVpByqQ8nFqCS9aHicqwUfXgzFDslvpEyYz19lvkHLIdtcIGp2d4q5dxHdjRNTO6HXCsnIKxUeuZSPcEbyVQCGAYznzz0RgmlkgnY0gmlwhANiQfuHb3BzdGFja4X947FQAIlzZWNwMjU2azGhAy3AtF2Jh_aPdOohg506Hjmtx-fQ1AKmu71C7PfkWAw9g3RjcIJ2YYN1ZHCCdmE
+    depends_on:
+      - blast-geth
+    networks:
+      - blast-net
+    env_file: 
+      - .env
+
+networks:
+  blast-net:
+    driver: bridge
