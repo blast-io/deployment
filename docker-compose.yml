@@ -6,16 +6,20 @@ services:
     volumes:
       - $PWD:/blast:rw
     command: >
-      sh -c "[ ! -f /blast/jwt.txt ] && openssl rand -hex 32 | tr -d '\n' > /blast/jwt.txt"
+      sh -c "[ ! -f /blast/jwt.txt ] && openssl rand -hex 32 | tr -d '\n' > /blast/jwt.txt || exit 0"
   # initialise geth db
   geth-init:
     image: blastio/blast-geth:testnet-sepolia
     volumes:
       - $PWD:/blast:rw
+    entrypoint: /bin/sh
     command: >
-      init --datadir=/blast/${GETH_DATA_DIR} /blast/config/genesis.json
+      -c "[ ! -d /blast/${GETH_DATA_DIR}/geth ] && /usr/local/bin/geth init --datadir=/blast/${GETH_DATA_DIR} /blast/config/genesis.json || exit 0"
     depends_on:
-      - generate-jwt
+      generate-jwt:
+        condition: service_completed_successfully
+    env_file: 
+      - .env
   blast-geth:
     image: blastio/blast-geth:testnet-sepolia
     volumes:
