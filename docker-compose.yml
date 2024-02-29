@@ -50,7 +50,6 @@ services:
       --nodiscover
       --maxpeers=0
       --rollup.disabletxpoolgossip=true
-      --rollup.sequencerhttp=${SEQUENCER_URL}
     networks:
       - blast-net
     env_file: 
@@ -72,7 +71,6 @@ services:
       --l2="http://blast-geth:8551"
       --l2.jwt-secret=/blast/jwt.txt
       --rollup.config="/blast/${NETWORK}/rollup.json"
-      --p2p.bootnodes=${BOOTNODES}
     depends_on:
       - blast-geth
     networks:
