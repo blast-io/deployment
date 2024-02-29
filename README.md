@@ -2,16 +2,15 @@
 
 This repo explains how to run a node for the [Blast](https://blast.io) L2 network. Blast is a fork of Optimism, so the deployment process is the same as that of a typical OP stack chain.
 
-The following instructions are specific to the Blast Sepolia Testnet and will be updated to support the Blast Mainnet when it's live.
-
 ## Prereqs
 
 1. Install [docker](https://docs.docker.com/engine/install/)
 
 2. Copy the `.env.example` file to `.env` and set the values accordingly:
 
+- NETWORK: `Blast network, value should be mainnet or sepolia`
 - GETH_DATA_DIR: `Relative path to the directory that will store chain data`
-- L1_RPC_URL: `Your Sepolia L1 RPC endpoint`
+- L1_RPC_URL: `Your L1 RPC endpoint`
 - L1_RPC_KIND: `The type of RPC provider; valid options are: alchemy, quicknode, infura, parity, nethermind, debug_geth, erigon, basic, any`
 
 ## Running the node

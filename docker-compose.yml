@@ -9,19 +9,20 @@ services:
       sh -c "[ ! -f /blast/jwt.txt ] && openssl rand -hex 32 | tr -d '\n' > /blast/jwt.txt || exit 0"
   # initialise geth db
   geth-init:
-    image: blastio/blast-geth:testnet-sepolia
+    image: blastio/blast-geth:${NETWORK}
     volumes:
       - $PWD:/blast:rw
     entrypoint: /bin/sh
     command: >
-      -c "[ ! -d /blast/${GETH_DATA_DIR}/geth ] && /usr/local/bin/geth init --datadir=/blast/${GETH_DATA_DIR} /blast/config/genesis.json || exit 0"
+      -c "[ ! -d /blast/${GETH_DATA_DIR}/geth ] && /usr/local/bin/geth init --datadir=/blast/${GETH_DATA_DIR} /blast/${NETWORK}/genesis.json || exit 0"
     depends_on:
       generate-jwt:
         condition: service_completed_successfully
     env_file: 
       - .env
+      - ${NETWORK}/.config
   blast-geth:
-    image: blastio/blast-geth:testnet-sepolia
+    image: blastio/blast-geth:${NETWORK}
     volumes:
       - $PWD:/blast
     ports:
@@ -49,16 +50,17 @@ services:
       --nodiscover
       --maxpeers=0
       --rollup.disabletxpoolgossip=true
-      --rollup.sequencerhttp=https://sequencer.s2.testblast.io
+      --rollup.sequencerhttp=${SEQUENCER_URL}
     networks:
       - blast-net
     env_file: 
       - .env
+      - ${NETWORK}/.config
     depends_on:
       geth-init:
         condition: service_completed_successfully
   op-node:
-    image: blastio/blast-optimism:testnet-sepolia
+    image: blastio/blast-optimism:${NETWORK}
     volumes:
       - $PWD:/blast
     ports:
@@ -69,14 +71,15 @@ services:
       --l1.rpckind="$L1_RPC_KIND"
       --l2="http://blast-geth:8551"
       --l2.jwt-secret=/blast/jwt.txt
-      --rollup.config="/blast/config/rollup.json"
-      --p2p.bootnodes=enr:-J-4QM3GLUFfKMSJQuP1UvuKQe8DyovE7Eaiit0l6By4zjTodkR4V8NWXJxNmlg8t8rP-Q-wp3jVmeAOml8cjMj__ROGAYznzb_HgmlkgnY0gmlwhA-cZ_eHb3BzdGFja4X947FQAIlzZWNwMjU2azGhAiuDqvB-AsVSRmnnWr6OHfjgY8YfNclFy9p02flKzXnOg3RjcIJ2YYN1ZHCCdmE,enr:-J-4QDCVpByqQ8nFqCS9aHicqwUfXgzFDslvpEyYz19lvkHLIdtcIGp2d4q5dxHdjRNTO6HXCsnIKxUeuZSPcEbyVQCGAYznzz0RgmlkgnY0gmlwhANiQfuHb3BzdGFja4X947FQAIlzZWNwMjU2azGhAy3AtF2Jh_aPdOohg506Hjmtx-fQ1AKmu71C7PfkWAw9g3RjcIJ2YYN1ZHCCdmE
+      --rollup.config="/blast/${NETWORK}/rollup.json"
+      --p2p.bootnodes=${BOOTNODES}
     depends_on:
       - blast-geth
     networks:
       - blast-net
     env_file: 
       - .env
+      - ${NETWORK}/.config
 
 networks:
   blast-net:
