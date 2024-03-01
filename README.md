@@ -32,4 +32,5 @@ curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["late
 
 ## Advanced usage
 
-If you have custom deployment requirements, you may need to build the node software yourself. See [here](https://safe-violet-16b.notion.site/Blast-Testnet-Deployment-Docs-95c1882f41dc45a4aee62b01409b8516) for additional instructions.
+If you have custom deployment requirements, you may need to build the node software yourself. See [here](https://safe-violet-16b.notion.site/Blast-Deployment-Docs-b2f2b7b3c9a645fe8d6ce49fb963a467) for additional instructions.
+
