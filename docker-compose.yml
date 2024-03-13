@@ -3,6 +3,7 @@ services:
   # generate jwt.txt if it's absent
   generate-jwt:
     image: blastio/openssl
+    pull_policy: always
     volumes:
       - $PWD:/blast:rw
     command: >
@@ -10,6 +11,7 @@ services:
   # initialise geth db
   geth-init:
     image: blastio/blast-geth:${NETWORK}
+    pull_policy: always
     volumes:
       - $PWD:/blast:rw
     entrypoint: /bin/sh
@@ -23,6 +25,7 @@ services:
       - ${NETWORK}/.config
   blast-geth:
     image: blastio/blast-geth:${NETWORK}
+    pull_policy: always
     volumes:
       - $PWD:/blast
     ports:
@@ -60,6 +63,7 @@ services:
         condition: service_completed_successfully
   op-node:
     image: blastio/blast-optimism:${NETWORK}
+    pull_policy: always
     volumes:
       - $PWD:/blast
     ports:

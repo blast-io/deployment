@@ -17,7 +17,7 @@ This repo explains how to run a node for the [Blast](https://blast.io) L2 networ
 
 ```
 # pull the latest images to stay up to date
-docker compose pull 
+docker compose pull --policy=always
 
 # run the node
 docker compose up 
