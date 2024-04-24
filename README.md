@@ -12,6 +12,7 @@ This repo explains how to run a node for the [Blast](https://blast.io) L2 networ
 - GETH_DATA_DIR: `Relative path to the directory that will store chain data`
 - L1_RPC_URL: `Your L1 RPC endpoint`
 - L1_RPC_KIND: `The type of RPC provider; valid options are: alchemy, quicknode, infura, parity, nethermind, debug_geth, erigon, basic, any`
+- OP_NODE_L1_BEACON: `Your L1 Beacon api endpoint`
 
 ## Running the node
 
