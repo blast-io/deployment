@@ -75,6 +75,11 @@ services:
       --l2="http://blast-geth:8551"
       --l2.jwt-secret=/blast/jwt.txt
       --rollup.config="/blast/${NETWORK}/rollup.json"
+      --p2p.listen.ip=0.0.0.0
+      --p2p.listen.tcp=9003
+      --p2p.listen.udp=9003
+      --p2p.scoring.peers=light
+      --p2p.ban.peers=true
     depends_on:
       - blast-geth
     networks:
