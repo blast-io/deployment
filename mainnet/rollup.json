@@ -24,6 +24,8 @@
   "l2_chain_id": 81457,
   "regolith_time": 0,
   "canyon_time": 0,
+  "delta_time": 1716843600,
+  "ecotone_time": 1716843600,
   "batch_inbox_address": "0xff00000000000000000000000000000000081457",
   "deposit_contract_address": "0x0ec68c5b10f21effb74f2a5c61dfe6b08c0db6cb",
   "l1_system_config_address": "0x5531dcff39ec1ec727c4c5d2fc49835368f805a9",
