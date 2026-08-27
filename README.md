@@ -35,6 +35,18 @@ curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["late
 
 **To fully participate in p2p, please ensure TCP/UDP is allowed on port 9003, and add the argument `--p2p.advertise.ip=<host-machine-public-ip>` to the `op-node` service in the `docker-compose.yml` file.**
 
+## Customization
+
+You can customize the node's behavior by setting additional environment variables in your `.env` file:
+
+- `GETH_GC_MODE`: The garbage collection mode for Geth. Set to `archive` (default) to keep all historical state, or `full` to enable pruning and save disk space.
+
+If you need to add more flags to `blast-geth` or `op-node`, you can modify the `command` section in the `docker-compose.yml` file directly.
+
+## Contributing
+
+We welcome community contributions! If you have successfully deployed a node with a custom configuration or have discovered best practices, please share your experience by opening an issue or a pull request.
+
 ## Advanced usage
 
 If you have custom deployment requirements, you may need to build the node software yourself. See [here](https://safe-violet-16b.notion.site/Blast-Deployment-Docs-b2f2b7b3c9a645fe8d6ce49fb963a467) for additional instructions.

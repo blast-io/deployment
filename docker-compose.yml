@@ -49,7 +49,7 @@ services:
       --authrpc.vhosts="*"
       --authrpc.jwtsecret=/blast/jwt.txt
       --syncmode=full
-      --gcmode=archive
+      --gcmode=${GETH_GC_MODE:-archive}
       --nodiscover
       --maxpeers=0
       --rollup.disabletxpoolgossip=true
